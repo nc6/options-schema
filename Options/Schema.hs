@@ -11,7 +11,10 @@ data Name =
   | ShortName !Char
   deriving (Eq, Ord)
 
-data ArgumentDefault a = ArgumentDefault (Maybe a) (Maybe (a -> String))
+data ArgumentDefault a = ArgumentDefault (Maybe a) (Maybe String)
+
+instance Functor ArgumentDefault where
+  fmap f (ArgumentDefault val pp) = ArgumentDefault (fmap f val) pp
 
 data ArgumentDescr = ArgumentDescr {
     adSummary :: String
@@ -25,17 +28,33 @@ data Argument a = Argument {
   , aDescr :: ArgumentDescr
 }
 
+instance Functor Argument where
+  fmap f (Argument r def descr) = (Argument (\s -> r s >>= return . f) def' descr) where
+    def' = fmap f def
+
 data OptionGroup a where
   Single :: Option a -> OptionGroup a
   OneOf :: [Option a] -> OptionGroup a
-  GroupOf :: OptionGroup b -> OptionGroup c -> (b -> c -> a) -> OptionGroup a
+  ConsOf :: (b -> c -> a) -> Option b -> OptionGroup c -> OptionGroup a
+
+instance Functor OptionGroup where
+  fmap f (Single opt) = Single (fmap f opt)
+  fmap f (OneOf opts) = OneOf . (fmap . fmap) f $ opts
+  fmap f (ConsOf t first rest) = ConsOf (curry $ f . uncurry t) first rest
 
 data Block a =
     SingleArgument (Argument a)
   | Subsection (OptionGroup a)
+
+instance Functor Block where
+  fmap f (SingleArgument x) = SingleArgument $ fmap f x
+  fmap f (Subsection x) = Subsection $ fmap f x
 
 data Option a = Option {
     csNames :: [Name]
   , csDescription :: String
   , csBlock :: Block a
 }
+
+instance Functor Option where
+  fmap f (Option n d b) = Option n d (fmap f b)

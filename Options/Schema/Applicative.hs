@@ -15,8 +15,8 @@ import Options.Applicative.Builder.Internal (HasName)
 mkParser :: OptionGroup a -> Parser a
 mkParser (Single a) = mkOptionParser a
 mkParser (OneOf as) = foldl1 (<|>) . map mkOptionParser $ as
-mkParser (GroupOf b c f) = let
-    p1 = mkParser b
+mkParser (ConsOf f b c) = let
+    p1 = mkOptionParser b
     p2 = mkParser c
   in f <$> p1 <*> p2
 
@@ -25,7 +25,7 @@ mkOptionParser (Option n d block) = mkBlockParser n d block
 
 mkBlockParser :: [Name] -> String -> Block a -> Parser a
 mkBlockParser n d (SingleArgument a) = mkBasicParser n d a
-mkBlockParser n d (Subsection a) = mkParser a
+mkBlockParser n d (Subsection a) = mkParser a --TODO currently this ignores names
 
 -- | Make a basic parser for simple options
 mkBasicParser :: [Name] -> String -> Argument a -> Parser a
@@ -37,7 +37,7 @@ mkBasicParser n d (Argument
         , reader argReader
       ] ++ catMaybes [
           fmap value def
-        , fmap showDefaultWith pp
+        , fmap (\x -> showDefaultWith (\_ -> x)) pp
         , fmap metavar $ adMetavar desc
       ]
   in nullOption props
