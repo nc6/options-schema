@@ -2,7 +2,7 @@
 -- Copyright : (C) 2013 Xyratex Technology Limited.
 -- License   : All rights reserved.
 
-import Control.Applicative
+import Control.Applicative ((<*>))
 import Data.Monoid
 
 import qualified Options.Applicative as CL
@@ -10,43 +10,51 @@ import Options.Schema
 import Options.Schema.Applicative
 import Options.Schema.Builder
 
-data SubOpts = SubOpts Int deriving (Eq, Show)
+data SubOpts = SubOpts Int String deriving (Eq, Show)
 
-data MyOpts = MyOpts String String SubOpts deriving (Eq, Show)
+data MyOpts = MyOpts Int String SubOpts deriving (Eq, Show)
 
 defaultShow :: Show a => a -> ArgumentDefault a
 defaultShow x = ArgumentDefault (Just x) (Just $ show x)
 
 foo :: Option String
 foo = strOption $ long "foo" <> short 'f'
-                <> summary "The foo argument"
-                <> detail "Some more detail about the foo argument"
+                <> summary "The foo argument (mandatory)."
+                <> detail ("The foo argument is necessary. It should be a " ++
+                           "parser error to fail to include it.")
                 <> metavar "FOO"
-                <> value "foo_arg"
 
 bar :: Option String
-bar = strOption $ long "bar" <> short 'f'
+bar = strOption $ long "bar" <> short 'b'
                 <> summary "The bar argument"
                 <> detail "Some more detail about the bar argument"
                 <> metavar "BAR"
                 <> value "bar_arg"
 
 qux :: Option Int
-qux = intOption $ long "qux" <> short 'f'
+qux = intOption $ long "qux" <> short 'q'
                 <> summary "The qux argument"
                 <> detail "Some more detail about the qux argument"
                 <> metavar "QUX"
                 <> value 42
 
+qaz :: Option Int
+qaz = intOption $ long "qaz"
+                <> summary "The qaz argument"
+                <> detail "Some more detail about the qaz argument"
+                <> metavar "QAZ"
+                <> value 23
+
 mySubOpts :: Option SubOpts
-mySubOpts = subOption subOpts
+mySubOpts = compositeOption subOpts
             $  long "baz"
             <> summary "The baz subsection"
   where
-    subOpts = Subsection . liftAp . Single $ fmap SubOpts qux
+    --subOpts = Ap (Single bar) $ Ap (Single qaz) (Pure SubOpts)
+    subOpts = SubOpts <$$> one qaz <**> one bar
 
 myOpts :: Schema MyOpts
-myOpts = Ap (Single mySubOpts) (Ap (Single bar) (Ap (Single foo) (Pure MyOpts)))
+myOpts = MyOpts <$$> one qux <**> one foo <**> one mySubOpts
 
 optParser :: CL.Parser MyOpts
 optParser = mkParser myOpts

@@ -5,6 +5,7 @@
 {-# LANGUAGE RankNTypes #-}
 module Options.Schema.Builder where
 
+import Control.Applicative.Free
 import Data.Monoid
 import Options.Schema
 
@@ -17,6 +18,15 @@ data Mod a = Mod (Option a -> Option a)
 instance Monoid (Mod a) where
   mempty = Mod id
   (Mod f) `mappend` (Mod g) = Mod $ f . g
+
+-- Infix notation for `Ap`
+(<**>) :: Ap f (a->b) -> f a -> Ap f b
+fun <**> arg = Ap arg fun
+
+(<$$>) :: (a -> b) -> f a -> Ap f b
+fun <$$> arg = Pure fun <**> arg
+
+infixl 4 <**>, <$$>
 
 ------------ Basic Options ---------------------
 
@@ -39,12 +49,20 @@ strOption = option (return . id)
 intOption :: Mod Int -> Option Int
 intOption = option (return . read)
 
-subOption :: Block a -> Mod a -> Option a
-subOption block (Mod f) = f $ Option {
+compositeOption :: Schema a -> Mod a -> Option a
+compositeOption group (Mod f) = f $ Option {
     oNames = mempty
   , oDescription = mempty
-  , oBlock = block
+  , oBlock = Subsection group
 }
+
+------ Lifting options into OptionGroups --------
+
+one :: Option a -> OptionGroup a
+one = Single
+
+oneOf :: [Option a] -> OptionGroup a
+oneOf = OneOf
 
 ------------- Option Modifiers ------------------
 
