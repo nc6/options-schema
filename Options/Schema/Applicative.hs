@@ -1,4 +1,6 @@
--- |
+-- | Module to construct 'optparse-applicative'-style command-line parsers
+--   from a generic schema.
+--
 -- Copyright : (C) 2013 Xyratex Technology Limited.
 -- License   : All rights reserved.
 

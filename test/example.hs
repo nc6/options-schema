@@ -29,6 +29,7 @@ bar = strOption $ long "bar" <> short 'b'
                 <> summary "The bar argument"
                 <> detail "Some more detail about the bar argument"
                 <> metavar "BAR"
+                <> valueShow show
                 <> value "bar_arg"
 
 qux :: Option Int
@@ -36,6 +37,7 @@ qux = intOption $ long "qux" <> short 'q'
                 <> summary "The qux argument"
                 <> detail "Some more detail about the qux argument"
                 <> metavar "QUX"
+                <> valueShow show
                 <> value 42
 
 qaz :: Option Int
@@ -43,6 +45,7 @@ qaz = intOption $ long "qaz"
                 <> summary "The qaz argument"
                 <> detail "Some more detail about the qaz argument"
                 <> metavar "QAZ"
+                <> valueShow show
                 <> value 23
 
 mySubOpts :: Option SubOpts
@@ -50,7 +53,6 @@ mySubOpts = compositeOption subOpts
             $  long "baz"
             <> summary "The baz subsection"
   where
-    --subOpts = Ap (Single bar) $ Ap (Single qaz) (Pure SubOpts)
     subOpts = SubOpts <$$> one qaz <**> one bar
 
 myOpts :: Schema MyOpts

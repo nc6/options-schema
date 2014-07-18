@@ -55,8 +55,9 @@ data Argument a = Argument {
 }
 
 instance Functor Argument where
-  fmap f (Argument n r def descr) = Argument n (r >=> return . f) def' descr where
-    def' = fmap f def
+  fmap f (Argument n r def descr) =
+    Argument n (r >=> return . f) def' descr where
+      def' = fmap f def
 
 data Option a = Option {
     oNames :: [Name]
