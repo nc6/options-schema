@@ -77,6 +77,7 @@ instance Functor Block where
   fmap f (Subsection x) = Subsection $ fmap f x
 
 data OptionGroup a where
+  Empty :: OptionGroup ()
   Single :: Option a -> OptionGroup a
   OneOf :: [Option a] -> OptionGroup a
 

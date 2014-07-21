@@ -4,10 +4,13 @@
 -- Copyright : (C) 2013 Xyratex Technology Limited.
 -- License   : All rights reserved.
 
+{-# LANGUAGE GADTs #-}
+
 module Options.Schema.Applicative (
   mkParser
 ) where
 
+import Control.Applicative (empty)
 import Control.Applicative.Free
 import Data.Maybe (catMaybes)
 
@@ -19,6 +22,7 @@ mkParser :: Schema a -> Parser a
 mkParser = runAp mkOptionGroupParser
 
 mkOptionGroupParser :: OptionGroup a -> Parser a
+mkOptionGroupParser Empty = empty
 mkOptionGroupParser (Single a) = mkOptionParser a
 mkOptionGroupParser (OneOf as) = foldl1 (<|>) . map mkOptionParser $ as
 
