@@ -40,12 +40,12 @@ data Description = Description {
 }
 
 instance Monoid Description where
-    mempty = Description Nothing Nothing
-    (Description a b) `mappend` (Description c d) =
-      Description (a `mergeDesc` c) (b `mergeDesc` d) where
-        mergeDesc Nothing x = x
-        mergeDesc x Nothing = x
-        mergeDesc a b = a
+  mempty = Description Nothing Nothing
+  (Description a b) `mappend` (Description c d) =
+    Description (a `mergeDesc` c) (b `mergeDesc` d) where
+      mergeDesc Nothing x = x
+      mergeDesc x Nothing = x
+      mergeDesc a b = a
 
 data Argument a = Argument {
     aMetavar :: Maybe String
