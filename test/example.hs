@@ -10,7 +10,7 @@ import Options.Schema
 import Options.Schema.Applicative
 import Options.Schema.Builder
 
-data SubOpts = SubOpts Int String deriving (Eq, Show)
+data SubOpts = SubOpts Int (Maybe String) deriving (Eq, Show)
 
 data MyOpts = MyOpts Int String SubOpts deriving (Eq, Show)
 
@@ -24,13 +24,11 @@ foo = strOption $ long "foo" <> short 'f'
                            "parser error to fail to include it.")
                 <> metavar "FOO"
 
-bar :: Option String
-bar = strOption $ long "bar" <> short 'b'
+bar :: Option (Maybe String)
+bar = optional . strOption $ long "bar" <> short 'b'
                 <> summary "The bar argument"
                 <> detail "Some more detail about the bar argument"
                 <> metavar "BAR"
-                <> valueShow show
-                <> value "bar_arg"
 
 qux :: Option Int
 qux = intOption $ long "qux" <> short 'q'

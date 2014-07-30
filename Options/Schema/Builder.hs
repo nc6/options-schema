@@ -61,6 +61,12 @@ compositeOption group (Mod f) = f $ Option {
   , oBlock = Subsection group
 }
 
+-- | Make a mandatory argument optional with a default of `Nothing`
+optional :: Option a -> Option (Maybe a)
+optional = def . fmap return where
+  (Mod def) = valueShow (\_ -> "Nothing") <> value Nothing
+
+
 ------ Lifting options into OptionGroups --------
 
 -- | Construct an @OptionGroup@ containing a single option.
