@@ -66,6 +66,19 @@ optional :: Option a -> Option (Maybe a)
 optional = def . fmap return where
   (Mod def) = valueShow (\_ -> "Nothing") <> value Nothing
 
+-- | Make an argument optional with a delineated default, using an appropriate
+--   show instance to display the default.
+defaultableShow :: Show a => a -> Option a -> Option (Defaultable a)
+defaultableShow a = def . fmap Configured where
+  (Mod def) = valueShow (\_ -> show a) <> value (Default a)
+
+-- | Make an argument optional with a delineated default.
+defaultable :: a -- ^ Default value.
+            -> (a -> String) -- ^ Function to display default value.
+            -> Option a -- ^ Existing option.
+            -> Option (Defaultable a)
+defaultable a pa = def . fmap Configured where
+  (Mod def) = valueShow (\_ -> pa a) <> value (Default a)
 
 ------ Lifting options into OptionGroups --------
 

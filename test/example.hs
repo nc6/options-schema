@@ -12,7 +12,7 @@ import Options.Schema.Builder
 
 data SubOpts = SubOpts Int (Maybe String) deriving (Eq, Show)
 
-data MyOpts = MyOpts Int String SubOpts deriving (Eq, Show)
+data MyOpts = MyOpts (Defaultable Int) String SubOpts deriving (Eq, Show)
 
 defaultShow :: Show a => a -> ArgumentDefault a
 defaultShow x = ArgumentDefault (Just x) (Just $ show x)
@@ -30,13 +30,11 @@ bar = optional . strOption $ long "bar" <> short 'b'
                 <> detail "Some more detail about the bar argument"
                 <> metavar "BAR"
 
-qux :: Option Int
-qux = intOption $ long "qux" <> short 'q'
+qux :: Option (Defaultable Int)
+qux = defaultableShow 42 . intOption $ long "qux" <> short 'q'
                 <> summary "The qux argument"
                 <> detail "Some more detail about the qux argument"
                 <> metavar "QUX"
-                <> valueShow show
-                <> value 42
 
 qaz :: Option Int
 qaz = intOption $ long "qaz"
