@@ -7,10 +7,12 @@ module Data.Defaultable where
 
 import Data.Typeable (Typeable)
 
+import GHC.Generics (Generic)
+
 data Defaultable a =
     Configured !a
   | Default !a
-  deriving (Eq, Ord, Show, Typeable)
+  deriving (Eq, Ord, Show, Generic, Typeable)
 
 instance Functor Defaultable where
   fmap f (Default a) = Default $ f a
