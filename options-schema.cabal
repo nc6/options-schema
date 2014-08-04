@@ -17,6 +17,7 @@ cabal-version:       >=1.10
 
 library
   exposed-modules:
+                       Data.Defaultable,
                        Options.Schema,
                        Options.Schema.Applicative,
                        Options.Schema.Builder

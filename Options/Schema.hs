@@ -15,7 +15,6 @@ module Options.Schema (
   , Option(..)
   , Block(..)
   , OptionGroup(..)
-  , Defaultable(..)
 ) where
 
 import Control.Monad ((>=>))
@@ -24,11 +23,6 @@ import Control.Applicative.Free
 import Data.Monoid
 
 type Schema a = Ap OptionGroup a
-
-data Defaultable a =
-    Configured !a
-  | Default !a
-  deriving (Eq, Ord, Show)
 
 data Name =
     LongName !String

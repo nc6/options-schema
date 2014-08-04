@@ -6,6 +6,7 @@
 module Options.Schema.Builder where
 
 import Control.Applicative.Free
+import Data.Defaultable
 import Data.Monoid
 import Options.Schema
 

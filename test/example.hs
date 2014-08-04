@@ -3,6 +3,7 @@
 -- License   : All rights reserved.
 
 import Control.Applicative ((<*>))
+import Data.Defaultable
 import Data.Monoid
 
 import qualified Options.Applicative as CL
