@@ -38,15 +38,14 @@ mkBasicParser :: [Name] -> Description -> Argument a -> Parser a
 mkBasicParser n d (Argument
   argName argReader (ArgumentDefault def pp) desc) = let
     names = foldl1 (<>) . map mkName $ n
-    props = foldl1 (<>) $ names : [
-        reader argReader
-      ] ++ catMaybes [
+    props = foldl1 (<>) $ names :
+      catMaybes [
           fmap help $ dSummary d
         , fmap value def
         , fmap (\x -> showDefaultWith (\_ -> x)) pp
         , fmap metavar argName
       ]
-  in nullOption props
+  in option argReader props
 
 mkName :: HasName f => Name -> Mod f a
 mkName name = case name of
