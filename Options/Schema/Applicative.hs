@@ -5,6 +5,7 @@
 -- License   : All rights reserved.
 
 {-# LANGUAGE GADTs #-}
+{-# LANGUAGE RankNTypes #-}
 
 module Options.Schema.Applicative (
   mkParser
@@ -12,10 +13,13 @@ module Options.Schema.Applicative (
 
 import Control.Applicative (empty)
 import Control.Applicative.Free
+import Control.Monad.Trans.Class (lift)
+import Control.Monad.Trans.Except
 import Data.Maybe (catMaybes)
 
 import Options.Schema
 import Options.Applicative
+import Options.Applicative.Types (readerAsk, ReadM(..))
 import Options.Applicative.Builder.Internal (HasName)
 
 mkParser :: Schema a -> Parser a
@@ -45,9 +49,12 @@ mkBasicParser n d (Argument
         , fmap (\x -> showDefaultWith (\_ -> x)) pp
         , fmap metavar argName
       ]
-  in option argReader props
+  in option (mkReadM argReader) props
 
 mkName :: HasName f => Name -> Mod f a
 mkName name = case name of
   LongName n -> long n
   ShortName n -> short n
+
+mkReadM :: (String -> Except ParseError a) -> ReadM a
+mkReadM oldReader = readerAsk >>= ReadM . lift . oldReader
