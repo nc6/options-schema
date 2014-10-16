@@ -12,7 +12,7 @@ module Options.Schema.Applicative (
 ) where
 
 import Control.Applicative (empty)
-import Control.Applicative.Free
+import Control.Alternative.Free
 import Control.Monad.Trans.Class (lift)
 import Control.Monad.Trans.Except
 import Data.Maybe (catMaybes)
@@ -23,7 +23,7 @@ import Options.Applicative.Types (readerAsk, ReadM(..))
 import Options.Applicative.Builder.Internal (HasName)
 
 mkParser :: Schema a -> Parser a
-mkParser = runAp mkOptionGroupParser
+mkParser = runAlt mkOptionGroupParser
 
 mkOptionGroupParser :: OptionGroup a -> Parser a
 mkOptionGroupParser Empty = empty

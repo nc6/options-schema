@@ -5,7 +5,8 @@
 {-# LANGUAGE RankNTypes #-}
 module Options.Schema.Builder where
 
-import Control.Applicative.Free
+import qualified Control.Applicative as App
+import Control.Alternative.Free
 import Data.Defaultable
 import Data.Monoid
 import Options.Schema
@@ -19,16 +20,6 @@ data Mod a = Mod (Option a -> Option a)
 instance Monoid (Mod a) where
   mempty = Mod id
   (Mod f) `mappend` (Mod g) = Mod $ f . g
-
--- | Infix notation for `Ap`
-(<**>) :: Ap f (a->b) -> f a -> Ap f b
-fun <**> arg = Ap arg fun
-
--- | Equivalent of <$>
-(<$$>) :: (a -> b) -> f a -> Ap f b
-fun <$$> arg = Pure fun <**> arg
-
-infixl 4 <**>, <$$>
 
 ------------ Basic Options ---------------------
 
@@ -83,14 +74,18 @@ defaultable a pa = def . fmap Configured where
 
 ------ Lifting options into OptionGroups --------
 
--- | Construct an @OptionGroup@ containing a single option.
-one :: Option a -> OptionGroup a
-one = Single
+-- | Construct an @Schema@ containing a single option.
+one :: Option a -> Schema a
+one = Alt . (App.pure :: a -> [a]) . Pure . Single
+
+-- | Construct a @Schema@ containing a repeatable option.
+many :: Option a -> Schema [a]
+many = App.many . Pure . Single
 
 -- | Construct an @OptionGroup@ consisting of a number of
 --   alternate options.
-oneOf :: [Option a] -> OptionGroup a
-oneOf = OneOf
+oneOf :: [Option a] -> Schema a
+oneOf = Pure . OneOf
 
 ------------- Option Modifiers ------------------
 

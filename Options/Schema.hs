@@ -5,8 +5,8 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE RankNTypes #-}
 module Options.Schema (
-    Ap(..)
-  , liftAp
+    Alt(..)
+  , liftAlt
   , Schema
   , Name(..)
   , ArgumentDefault(..)
@@ -18,11 +18,11 @@ module Options.Schema (
 ) where
 
 import Control.Monad ((>=>))
-import Control.Applicative.Free
+import Control.Alternative.Free
 
 import Data.Monoid
 
-type Schema a = Ap OptionGroup a
+type Schema a = Alt OptionGroup a
 
 data Name =
     LongName !String
