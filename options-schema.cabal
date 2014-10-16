@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                options-schema
-version:             0.1.3.1
+version:             0.1.3.2
 synopsis:            Generic schema for declaring program configuration.
 -- description:
 license:             AllRightsReserved
@@ -24,7 +24,9 @@ library
   -- other-modules:
   -- other-extensions:
   build-depends:       base >=4.7 && <4.8,
+                       binary,
                        free,
+                       hashable,
                        optparse-applicative >= 0.11.0,
                        transformers
 

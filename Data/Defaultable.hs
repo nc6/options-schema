@@ -6,6 +6,8 @@
 
 module Data.Defaultable where
 
+import Data.Binary
+import Data.Hashable
 import Data.Typeable (Typeable)
 
 import GHC.Generics (Generic)
@@ -18,6 +20,9 @@ data Defaultable a =
 instance Functor Defaultable where
   fmap f (Default a) = Default $ f a
   fmap f (Configured a) = Configured $ f a
+
+instance Binary a => Binary (Defaultable a)
+instance Hashable a => Hashable (Defaultable a)
 
 fromDefault :: Defaultable a -> a
 fromDefault (Configured a) = a
