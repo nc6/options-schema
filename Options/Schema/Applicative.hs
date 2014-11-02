@@ -23,12 +23,7 @@ import Options.Applicative.Types (readerAsk, ReadM(..))
 import Options.Applicative.Builder.Internal (HasName)
 
 mkParser :: Schema a -> Parser a
-mkParser = runAlt mkOptionGroupParser
-
-mkOptionGroupParser :: OptionGroup a -> Parser a
-mkOptionGroupParser Empty = empty
-mkOptionGroupParser (Single a) = mkOptionParser a
-mkOptionGroupParser (OneOf as) = foldl1 (<|>) . map mkOptionParser $ as
+mkParser = runAlt mkOptionParser
 
 mkOptionParser :: Option a -> Parser a
 mkOptionParser (Option n d block) = mkBlockParser n d block
