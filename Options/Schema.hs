@@ -14,7 +14,6 @@ module Options.Schema (
   , Argument(..)
   , Option(..)
   , Block(..)
-  , OptionGroup(..)
 ) where
 
 import Control.Monad ((>=>))
@@ -22,7 +21,7 @@ import Control.Alternative.Free
 
 import Data.Monoid
 
-type Schema a = Alt OptionGroup a
+type Schema a = Alt Option a
 
 data Name =
     LongName !String
@@ -75,12 +74,3 @@ data Block a =
 instance Functor Block where
   fmap f (SingleArgument x) = SingleArgument $ fmap f x
   fmap f (Subsection x) = Subsection $ fmap f x
-
-data OptionGroup a where
-  Empty :: OptionGroup ()
-  Single :: Option a -> OptionGroup a
-  OneOf :: [Option a] -> OptionGroup a
-
-instance Functor OptionGroup where
-  fmap f (Single opt) = Single (fmap f opt)
-  fmap f (OneOf opts) = OneOf . (fmap . fmap) f $ opts

@@ -5,9 +5,11 @@
 {-# LANGUAGE RankNTypes #-}
 module Options.Schema.Builder where
 
+import Control.Applicative ((<|>))
 import qualified Control.Applicative as App
 import Control.Alternative.Free
 import Data.Defaultable
+import Data.List (foldl')
 import Data.Monoid
 import Options.Schema
 
@@ -72,20 +74,20 @@ defaultable :: a -- ^ Default value.
 defaultable a pa = def . fmap Configured where
   (Mod def) = valueShow (\_ -> pa a) <> value (Default a)
 
------- Lifting options into OptionGroups --------
+------ Lifting options into Schemata --------
 
 -- | Construct an @Schema@ containing a single option.
 one :: Option a -> Schema a
-one = Alt . (App.pure :: a -> [a]) . Pure . Single
+one = liftAlt
 
 -- | Construct a @Schema@ containing a repeatable option.
 many :: Option a -> Schema [a]
-many = App.many . Pure . Single
+many = App.many . one
 
 -- | Construct an @OptionGroup@ consisting of a number of
 --   alternate options.
 oneOf :: [Option a] -> Schema a
-oneOf = Pure . OneOf
+oneOf = foldl' (<|>) App.empty . map one
 
 ------------- Option Modifiers ------------------
 
