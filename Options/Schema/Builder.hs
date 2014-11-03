@@ -35,7 +35,8 @@ module Options.Schema.Builder
   ) where
 
 import Control.Applicative
-  ( (<|>)
+  ( Alternative
+  , (<|>)
   , (<$>)
   , empty
   , many
@@ -92,10 +93,11 @@ compositeOption group (Mod f) = liftAlt . f $ Option {
 }
 
 -- | Make an argument optional with a delineated default.
-defaultable :: a -- ^ Default value.
-            -> Schema a -- ^ Existing option.
-            -> Schema (Defaultable a)
-defaultable a s = (Configured <$> s) <|> pure (Default a)
+defaultable :: Alternative f
+            => a -- ^ Default value.
+            -> f a -- ^ Existing option.
+            -> f (Defaultable a)
+defaultable a s = Configured <$> s <|> pure (Default a)
 
 ------ Lifting options into Schemata --------
 
