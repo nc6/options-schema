@@ -3,10 +3,46 @@
 -- License   : All rights reserved.
 
 {-# LANGUAGE RankNTypes #-}
-module Options.Schema.Builder where
+module Options.Schema.Builder
+  ( Mod
+  -- * Basic options
+  , option
+  , strOption
+  , intOption
+  , compositeOption
+  -- * Alternatives
+  , oneOf
+  , many
+  , some
+  , defaultable
+  , optional
+  -- * Modifiers
+  , name
+  , long
+  , short
+  , desc
+  , summary
+  , detail
+  -- * Argument modifiers
+  , arg
+  , metavar
+  , reader
+  , argDesc
+  , value
+  , valueShow
+  , argSummary
+  , argDetail
+  ) where
 
-import Control.Applicative ((<|>))
-import qualified Control.Applicative as App
+import Control.Applicative
+  ( (<|>)
+  , (<$>)
+  , empty
+  , many
+  , optional
+  , pure
+  , some
+  )
 import Control.Alternative.Free
 import Data.Defaultable
 import Data.List (foldl')
@@ -26,8 +62,8 @@ instance Monoid (Mod a) where
 ------------ Basic Options ---------------------
 
 -- | Construct a basic option given a reader for the type.
-option :: Reader a -> Mod a -> Option a
-option rdr (Mod f) = f $ Option {
+option :: Reader a -> Mod a -> Schema a
+option rdr (Mod f) = liftAlt . f $ Option {
     oNames = mempty
   , oDescription = mempty
   , oBlock = SingleArgument $ Argument {
@@ -39,55 +75,34 @@ option rdr (Mod f) = f $ Option {
 }
 
 -- | Construct an option using the default 'String' reader.
-strOption :: Mod String -> Option String
+strOption :: Mod String -> Schema String
 strOption = option (return . id)
 
 -- TODO This should not be partial - should have a sensible reader
 -- | Construct an option using the default 'Int' reader.
-intOption :: Mod Int -> Option Int
+intOption :: Mod Int -> Schema Int
 intOption = option (return . read)
 
 -- | Construct an option from a sub-schema.
-compositeOption :: Schema a -> Mod a -> Option a
-compositeOption group (Mod f) = f $ Option {
+compositeOption :: Schema a -> Mod a -> Schema a
+compositeOption group (Mod f) = liftAlt . f $ Option {
     oNames = mempty
   , oDescription = mempty
   , oBlock = Subsection group
 }
 
--- | Make a mandatory argument optional with a default of `Nothing`
-optional :: Option a -> Option (Maybe a)
-optional = def . fmap return where
-  (Mod def) = valueShow (\_ -> "Nothing") <> value Nothing
-
--- | Make an argument optional with a delineated default, using an appropriate
---   show instance to display the default.
-defaultableShow :: Show a => a -> Option a -> Option (Defaultable a)
-defaultableShow a = def . fmap Configured where
-  (Mod def) = valueShow (\_ -> show a) <> value (Default a)
-
 -- | Make an argument optional with a delineated default.
 defaultable :: a -- ^ Default value.
-            -> (a -> String) -- ^ Function to display default value.
-            -> Option a -- ^ Existing option.
-            -> Option (Defaultable a)
-defaultable a pa = def . fmap Configured where
-  (Mod def) = valueShow (\_ -> pa a) <> value (Default a)
+            -> Schema a -- ^ Existing option.
+            -> Schema (Defaultable a)
+defaultable a s = (Configured <$> s) <|> pure (Default a)
 
 ------ Lifting options into Schemata --------
 
--- | Construct an @Schema@ containing a single option.
-one :: Option a -> Schema a
-one = liftAlt
-
--- | Construct a @Schema@ containing a repeatable option.
-many :: Option a -> Schema [a]
-many = App.many . one
-
 -- | Construct an @OptionGroup@ consisting of a number of
 --   alternate options.
-oneOf :: [Option a] -> Schema a
-oneOf = foldl' (<|>) App.empty . map one
+oneOf :: [Schema a] -> Schema a
+oneOf = foldl' (<|>) empty
 
 ------------- Option Modifiers ------------------
 
