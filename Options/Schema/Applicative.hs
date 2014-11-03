@@ -5,6 +5,7 @@
 -- License   : All rights reserved.
 
 {-# LANGUAGE GADTs #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE RankNTypes #-}
 
 module Options.Schema.Applicative (
@@ -30,7 +31,17 @@ mkOptionParser (Option n d block) = mkBlockParser n d block
 
 mkBlockParser :: [Name] -> Description -> Block a -> Parser a
 mkBlockParser n d (SingleArgument a) = mkBasicParser n d a
-mkBlockParser n d (Subsection a) = mkParser a --TODO currently this ignores names
+mkBlockParser sn d (Subsection a) = mkParser . (hoistAlt go) $ a
+  where
+    go :: Option a -> Option a
+    go (Option n d b) = Option (fmap go' n) d b
+    go' = \case
+      LongName a -> LongName $ fstName ++ "-" ++ a
+      ShortName a -> LongName $ fstName ++ "-" ++ [a]
+    fstName = case (head sn) of
+      LongName a -> a
+      ShortName a -> [a]
+
 
 -- | Make a basic parser for simple options
 mkBasicParser :: [Name] -> Description -> Argument a -> Parser a
