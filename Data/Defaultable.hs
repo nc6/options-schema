@@ -6,6 +6,12 @@
 
 module Data.Defaultable where
 
+import Control.Applicative
+  ( Alternative
+  , (<$>)
+  , (<|>)
+  , pure
+  )
 import Data.Binary
 import Data.Hashable
 import Data.Typeable (Typeable)
@@ -27,3 +33,10 @@ instance Hashable a => Hashable (Defaultable a)
 fromDefault :: Defaultable a -> a
 fromDefault (Configured a) = a
 fromDefault (Default a) = a
+
+-- | Make an argument optional with a delineated default.
+defaultable :: Alternative f
+            => a -- ^ Default value.
+            -> f a -- ^ Existing option.
+            -> f (Defaultable a)
+defaultable a s = Configured <$> s <|> pure (Default a)

@@ -92,13 +92,6 @@ compositeOption group (Mod f) = liftAlt . f $ Option {
   , oBlock = Subsection group
 }
 
--- | Make an argument optional with a delineated default.
-defaultable :: Alternative f
-            => a -- ^ Default value.
-            -> f a -- ^ Existing option.
-            -> f (Defaultable a)
-defaultable a s = Configured <$> s <|> pure (Default a)
-
 ------ Lifting options into Schemata --------
 
 -- | Construct an @OptionGroup@ consisting of a number of
