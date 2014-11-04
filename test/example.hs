@@ -2,7 +2,7 @@
 -- Copyright : (C) 2013 Xyratex Technology Limited.
 -- License   : All rights reserved.
 
-import Control.Applicative ((<*>))
+import Control.Applicative ((<*>), (<$>), pure)
 import Data.Defaultable
 import Data.Monoid
 
@@ -11,49 +11,49 @@ import Options.Schema
 import Options.Schema.Applicative
 import Options.Schema.Builder
 
-data SubOpts = SubOpts Int (Maybe String) deriving (Eq, Show)
+data SubOpts = SubOpts (Defaultable Int) (Maybe String) deriving (Eq, Show)
 
-data MyOpts = MyOpts (Defaultable Int) String SubOpts deriving (Eq, Show)
+data MyOpts = MyOpts (Maybe Int) String SubOpts deriving (Eq, Show)
 
 defaultShow :: Show a => a -> ArgumentDefault a
 defaultShow x = ArgumentDefault (Just x) (Just $ show x)
 
-foo :: Option String
+foo :: Schema String
 foo = strOption $ long "foo" <> short 'f'
                 <> summary "The foo argument (mandatory)."
                 <> detail ("The foo argument is necessary. It should be a " ++
                            "parser error to fail to include it.")
                 <> metavar "FOO"
 
-bar :: Option (Maybe String)
+bar :: Schema (Maybe String)
 bar = optional . strOption $ long "bar" <> short 'b'
                 <> summary "The bar argument"
                 <> detail "Some more detail about the bar argument"
                 <> metavar "BAR"
 
-qux :: Option (Defaultable Int)
-qux = defaultableShow 42 . intOption $ long "qux" <> short 'q'
+qux :: Schema (Maybe Int)
+qux = optional . intOption $ long "qux" <> short 'q'
                 <> summary "The qux argument"
                 <> detail "Some more detail about the qux argument"
                 <> metavar "QUX"
 
-qaz :: Option Int
-qaz = intOption $ long "qaz"
+qaz :: Schema (Defaultable Int)
+qaz = defaultable 4 . intOption $ long "qaz"
                 <> summary "The qaz argument"
                 <> detail "Some more detail about the qaz argument"
                 <> metavar "QAZ"
-                <> valueShow show
-                <> value 23
+                -- <> valueShow show
+                -- <> value 23
 
-mySubOpts :: Option SubOpts
+mySubOpts :: Schema SubOpts
 mySubOpts = compositeOption subOpts
             $  long "baz"
             <> summary "The baz subsection"
   where
-    subOpts = SubOpts <$$> one qaz <**> one bar
+    subOpts = SubOpts <$> qaz <*> bar
 
 myOpts :: Schema MyOpts
-myOpts = MyOpts <$$> one qux <**> one foo <**> one mySubOpts
+myOpts = MyOpts <$> qux <*> foo <*> mySubOpts
 
 optParser :: CL.Parser MyOpts
 optParser = mkParser myOpts
