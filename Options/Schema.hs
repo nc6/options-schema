@@ -19,7 +19,7 @@ module Options.Schema (
 import Control.Monad ((>=>))
 import Control.Alternative.Free
 
-import Data.Monoid
+import Data.Monoid (Monoid(..))
 
 type Schema a = Alt Option a
 
