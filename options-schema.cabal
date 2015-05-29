@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                options-schema
-version:             0.2.0.0
+version:             0.2.1.0
 synopsis:            Generic schema for declaring program configuration.
 -- description:
 license:             AllRightsReserved
@@ -17,20 +17,32 @@ cabal-version:       >=1.10
 
 library
   exposed-modules:
-                       Data.Defaultable,
-                       Options.Schema,
-                       Options.Schema.Applicative,
-                       Options.Schema.Builder
-  -- other-modules:
+                      Control.Alternative.FreeStar,
+                      Data.Defaultable,
+                      Options.Schema,
+                      Options.Schema.Applicative,
+                      Options.Schema.Builder
+  other-modules:
+                      Control.Alternative.FreeND
+--                      Control.Alternative.FreeStar
+                      Control.Applicative.Free.Complement
+                      Data.Bimonoid
+                      Data.Bimonoid.Expr
+                      Data.Bimonoid.Free
+                      Data.Monoid1
   -- other-extensions:
-  build-depends:       base >=4.7 && <4.9,
+  build-depends:       base >=4.8 && <4.9,
+                       bifunctors,
                        binary,
+                       comonad,
                        free,
                        hashable,
+                       kan-extensions,
                        optparse-applicative >= 0.11.0,
+                       semigroups,
                        transformers
 
-  -- hs-source-dirs:
+  hs-source-dirs:      src
   default-language:    Haskell2010
 
 Test-suite test
@@ -42,6 +54,20 @@ Test-suite test
     test
   Main-is:
     example.hs
-  build-depends:       base >=4.6 && <4.8
+  build-depends:       base >=4.6 && <4.9
+                     , options-schema
+                     , optparse-applicative
+
+Test-suite test2
+  Default-language:
+    Haskell2010
+  Type:
+    exitcode-stdio-1.0
+  Hs-source-dirs:
+    test
+  Main-is:
+    Applicative.hs
+  build-depends:       base >=4.6 && <4.9
+                     , free
                      , options-schema
                      , optparse-applicative

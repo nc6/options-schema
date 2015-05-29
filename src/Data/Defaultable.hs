@@ -8,9 +8,7 @@ module Data.Defaultable where
 
 import Control.Applicative
   ( Alternative
-  , (<$>)
   , (<|>)
-  , pure
   )
 import Data.Binary
 import Data.Hashable
