@@ -17,9 +17,7 @@ module Options.Schema (
 ) where
 
 import Control.Monad ((>=>))
-import Control.Alternative.Free
-
-import Data.Monoid (Monoid(..))
+import Control.Alternative.FreeStar
 
 type Schema a = Alt Option a
 
@@ -44,7 +42,7 @@ instance Monoid Description where
     Description (a `mergeDesc` c) (b `mergeDesc` d) where
       mergeDesc Nothing x = x
       mergeDesc x Nothing = x
-      mergeDesc a b = a
+      mergeDesc x _ = x
 
 data Argument a = Argument {
     aMetavar :: Maybe String

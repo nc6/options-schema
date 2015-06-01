@@ -35,16 +35,13 @@ module Options.Schema.Builder
   ) where
 
 import Control.Applicative
-  ( Alternative
-  , (<|>)
-  , (<$>)
+  ( (<|>)
   , empty
   , many
   , optional
-  , pure
   , some
   )
-import Control.Alternative.Free
+import Control.Alternative.FreeStar
 import Data.Defaultable
 import Data.List (foldl')
 import Data.Monoid
@@ -132,8 +129,8 @@ detail d = desc (Description Nothing (Just d))
 type ArgMod a = (Argument a -> Argument a)
 
 arg :: ArgMod a -> Mod a
-arg mod = Mod $ \a -> case oBlock a of
-  SingleArgument b -> a { oBlock = SingleArgument (mod b) }
+arg md = Mod $ \a -> case oBlock a of
+  SingleArgument b -> a { oBlock = SingleArgument (md b) }
   _ -> a
 
 -- | Specify the default name for the argument - e.g. for a command-line parser,

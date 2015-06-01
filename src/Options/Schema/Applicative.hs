@@ -12,8 +12,7 @@ module Options.Schema.Applicative (
   mkParser
 ) where
 
-import Control.Applicative (empty)
-import Control.Alternative.Free
+import Control.Alternative.FreeStar
 import Control.Monad.Trans.Class (lift)
 import Control.Monad.Trans.Except
 import Data.Maybe (catMaybes)
@@ -31,22 +30,22 @@ mkOptionParser (Option n d block) = mkBlockParser n d block
 
 mkBlockParser :: [Name] -> Description -> Block a -> Parser a
 mkBlockParser n d (SingleArgument a) = mkBasicParser n d a
-mkBlockParser sn d (Subsection a) = mkParser . (hoistAlt go) $ a
+mkBlockParser sn _ (Subsection a) = mkParser . (hoistAlt go) $ a
   where
     go :: Option a -> Option a
     go (Option n d b) = Option (fmap go' n) d b
     go' = \case
-      LongName a -> LongName $ fstName ++ "-" ++ a
-      ShortName a -> LongName $ fstName ++ "-" ++ [a]
+      LongName x -> LongName $ fstName ++ "-" ++ x
+      ShortName x -> LongName $ fstName ++ "-" ++ [x]
     fstName = case (head sn) of
-      LongName a -> a
-      ShortName a -> [a]
+      LongName x -> x
+      ShortName x -> [x]
 
 
 -- | Make a basic parser for simple options
 mkBasicParser :: [Name] -> Description -> Argument a -> Parser a
 mkBasicParser n d (Argument
-  argName argReader (ArgumentDefault def pp) desc) = let
+  argName argReader (ArgumentDefault def pp) _) = let
     names = foldl1 (<>) . map mkName $ n
     props = foldl1 (<>) $ names :
       catMaybes [
