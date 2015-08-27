@@ -36,7 +36,7 @@ hoistAlt phi (Alt x) = Alt $ ND.hoistAlt (Coproduct . coproduct
                                           x
   where
     hoistLan :: (forall x. h x -> k x) -> Lan g h a -> Lan g k a
-    hoistLan phi' (Lan x y) = Lan x (phi' y)
+    hoistLan phi' (Lan x' y) = Lan x' (phi' y)
 
 instance Functor f => Functor (Alt f) where
   fmap f = Alt . fmap f . unAlt

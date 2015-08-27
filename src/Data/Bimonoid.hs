@@ -8,7 +8,6 @@ module Data.Bimonoid
   ) where
 
 import Control.Applicative
-import Data.Monoid
 
 -- | A 'Bimonoid' is simply a type with two monoid structures.
 --

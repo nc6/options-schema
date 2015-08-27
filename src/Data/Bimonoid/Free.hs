@@ -7,11 +7,9 @@ module Data.Bimonoid.Free
   , FreeBM(..)
   ) where
 
-import Control.Applicative
 import Control.Monad
 import Data.Bifunctor
 import Data.Bimonoid
-import Data.Monoid
 
 data List' a
   = Nil'

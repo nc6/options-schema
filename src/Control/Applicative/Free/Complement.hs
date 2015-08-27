@@ -11,7 +11,6 @@ module Control.Applicative.Free.Complement
   , liftAp2
   ) where
 
-import Control.Applicative
 import Control.Applicative.Free
 
 -- | Unit complement of the monad 'Ap' on the category of endofunctors.
