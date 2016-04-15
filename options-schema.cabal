@@ -5,7 +5,7 @@ name:                options-schema
 version:             0.2.1.0
 synopsis:            Generic schema for declaring program configuration.
 -- description:
-license:             AllRightsReserved
+license:             BSD3
 license-file:        LICENSE
 author:              Nicholas Clarke
 maintainer:          nicholas.clarke@seagate.com

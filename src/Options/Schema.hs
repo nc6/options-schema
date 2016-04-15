@@ -1,6 +1,6 @@
 -- |
--- Copyright : (C) 2013 Xyratex Technology Limited.
--- License   : All rights reserved.
+-- Copyright : (C) 2014 Seagate Technology Limited.
+-- License   : BSD3
 
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE RankNTypes #-}

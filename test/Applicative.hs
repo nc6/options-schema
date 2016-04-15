@@ -1,6 +1,6 @@
 -- |
--- Copyright : (C) 2014 Xyratex Technology Limited.
--- License   : All rights reserved.
+-- Copyright : (C) 2014 Seagate Technology Limited.
+-- License   : BSD3
 
 import Control.Applicative
 import Control.Alternative.FreeStar

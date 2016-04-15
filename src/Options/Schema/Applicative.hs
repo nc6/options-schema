@@ -1,8 +1,8 @@
 -- | Module to construct 'optparse-applicative'-style command-line parsers
 --   from a generic schema.
 --
--- Copyright : (C) 2013 Xyratex Technology Limited.
--- License   : All rights reserved.
+-- Copyright : (C) 2014 Seagate Technology Limited.
+-- License   : BSD3
 
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE LambdaCase #-}
