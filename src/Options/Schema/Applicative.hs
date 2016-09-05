@@ -16,6 +16,7 @@ import Control.Alternative.FreeStar
 import Control.Monad.Trans.Class (lift)
 import Control.Monad.Trans.Except
 import Data.Maybe (catMaybes)
+import Data.Monoid ((<>))
 
 import Options.Schema
 import Options.Applicative

@@ -19,18 +19,19 @@ module Control.Alternative.FreeND
   , apToAlt
   , altToList1
   , list1ToAlt
+  , coproduct
   ) where
 
 import Control.Applicative
 import Control.Applicative.Free
 import Control.Applicative.Free.Complement
-import Data.Functor.Coproduct
+import Data.Functor.Sum (Sum(..))
 import Data.Monoid1
 
 newtype Alt1 f a = Alt1
-  { unAlt1 :: Ap' (Coproduct f (Alt2 f)) a }
+  { unAlt1 :: Ap' (Sum f (Alt2 f)) a }
 newtype Alt2 f a = Alt2
-  { unAlt2 :: List1' (Coproduct f (Alt1 f)) a }
+  { unAlt2 :: List1' (Sum f (Alt1 f)) a }
 
 instance Functor (Alt1 f) where
   fmap f = Alt1 . fmap f . unAlt1
@@ -45,6 +46,12 @@ instance Functor f => Functor (Alt2 f) where
 instance Functor f => Monoid1 (Alt2 f) where
   mempty1 = Alt2 mempty1
   mappend1 x y = Alt2 $ mappend1 (unAlt2 x) (unAlt2 y)
+
+coproduct :: (f a -> b) -> (g a -> b)
+          -> Sum f g a
+          -> b
+coproduct f _ (InL x) = f x
+coproduct _ f (InR x) = f x
 
 -- | Coproduct of consistent monads.
 --
@@ -75,37 +82,37 @@ hoistAlt phi (Branch1 b1) = Branch1 $ hoistAlt1 phi b1
 hoistAlt phi (Branch2 b2) = Branch2 $ hoistAlt2 phi b2
 
 hoistAlt1 :: (forall x. f x -> g x) -> Alt1 f a -> Alt1 g a
-hoistAlt1 phi (Alt1 x) = Alt1 $ hoistAp'  (Coproduct . coproduct
-                                            (Left . phi)
-                                            (Right . hoistAlt2 phi))
+hoistAlt1 phi (Alt1 x) = Alt1 $ hoistAp'  (coproduct
+                                            (InL . phi)
+                                            (InR . hoistAlt2 phi))
                                           x
 
 hoistAlt2 :: (forall x. f x -> g x) -> Alt2 f a -> Alt2 g a
-hoistAlt2 phi (Alt2 x) = Alt2 $ hoistList1' (Coproduct . coproduct
-                                              (Left . phi)
-                                              (Right . hoistAlt1 phi))
+hoistAlt2 phi (Alt2 x) = Alt2 $ hoistList1' (coproduct
+                                              (InL . phi)
+                                              (InR . hoistAlt1 phi))
                                             x
 
-altToAp :: Alt f a -> Ap (Coproduct f (Alt2 f)) a
-altToAp (LiftAlt x) = liftAp (left x)
+altToAp :: Alt f a -> Ap (Sum f (Alt2 f)) a
+altToAp (LiftAlt x) = liftAp (InL x)
 altToAp (Branch1 x) = ap'ToAp . unAlt1 $ x
-altToAp (Branch2 x) = liftAp (right x)
+altToAp (Branch2 x) = liftAp (InR x)
 
-apToAlt :: Functor f => Ap (Coproduct f (Alt2 f)) a -> Alt f a
+apToAlt :: Functor f => Ap (Sum f (Alt2 f)) a -> Alt f a
 apToAlt x = case apToAp' x of
-  Left (Coproduct (Left l)) -> LiftAlt l
-  Left (Coproduct (Right b2)) -> Branch2 b2
+  Left (InL l) -> LiftAlt l
+  Left (InR b2) -> Branch2 b2
   Right b1 -> Branch1 (Alt1 b1)
 
-altToList1 :: Alt f a -> List1 (Coproduct f (Alt1 f)) a
-altToList1 (LiftAlt x) = liftList1 (left x)
-altToList1 (Branch1 x) = liftList1 (right x)
+altToList1 :: Alt f a -> List1 (Sum f (Alt1 f)) a
+altToList1 (LiftAlt x) = liftList1 (InL x)
+altToList1 (Branch1 x) = liftList1 (InR x)
 altToList1 (Branch2 x) = list1'ToList1 . unAlt2 $ x
 
-list1ToAlt :: List1 (Coproduct f (Alt1 f)) a -> Alt f a
+list1ToAlt :: List1 (Sum f (Alt1 f)) a -> Alt f a
 list1ToAlt x = case list1ToList1' x of
-  Left (Coproduct (Left l)) -> LiftAlt l
-  Left (Coproduct (Right b1)) -> Branch1 b1
+  Left (InL l) -> LiftAlt l
+  Left (InR b1) -> Branch1 b1
   Right b2 -> Branch2 (Alt2 b2)
 
 instance Functor f => Functor (Alt f) where
