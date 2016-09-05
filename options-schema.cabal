@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                options-schema
-version:             0.2.1.0
+version:             0.2.1.1
 synopsis:            Generic schema for declaring program configuration.
 -- description:
 license:             BSD3

@@ -1,8 +1,11 @@
 -- |
 -- Copyright : (C) 2014 Paolo Capriotti.
 -- License   : BSD-style.
+--
+-- Free non-distributive 'Alternative' functor.
+
 {-# LANGUAGE RankNTypes #-}
--- | Free non-distributive 'Alternative' functor.
+
 module Control.Alternative.FreeND
   ( Alt(..)
   , Alt1(..)

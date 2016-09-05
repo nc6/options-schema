@@ -1,13 +1,15 @@
 -- |
 -- Copyright : (C) 2014 Paolo Capriotti.
 -- License   : BSD-style.
-{-# LANGUAGE RankNTypes #-}
--- | Free non-distributive 'Alternative' with a freely generated 'some'
+--  Free non-distributive 'Alternative' with a freely generated 'some'
 -- operation.
 --
 -- Note that `some` does /not/ verify:
 --
 -- > some v = (:) <$> v <*> many v
+
+{-# LANGUAGE RankNTypes #-}
+
 module Control.Alternative.FreeStar
   ( Alt(..)
   , liftAlt

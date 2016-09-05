@@ -1,8 +1,9 @@
 -- |
 -- Copyright : (C) 2014 Paolo Capriotti.
 -- License   : BSD-style.
+--
+-- An approximation of the free 'Bimonoid'.
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
--- | An approximation of the free 'Bimonoid'.
 module Data.Bimonoid.Expr
   ( Expr(..)
   , Expr'(..)
