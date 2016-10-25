@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                options-schema
-version:             0.2.2.0
+version:             0.2.2.1
 synopsis:            Generic schema for declaring program configuration.
 -- description:
 license:             BSD3
@@ -54,7 +54,7 @@ Test-suite test
     test
   Main-is:
     example.hs
-  build-depends:       base >=4.6 && <4.9
+  build-depends:       base >=4.6
                      , options-schema
                      , optparse-applicative
 
@@ -67,7 +67,7 @@ Test-suite test2
     test
   Main-is:
     Applicative.hs
-  build-depends:       base >=4.6 && <4.9
+  build-depends:       base >=4.6 
                      , free
                      , options-schema
                      , optparse-applicative
