@@ -42,7 +42,7 @@ import Control.Applicative
   , optional
   , some
   )
-import Control.Alternative.FreeStar
+import Control.Alternative.Freer
 import Data.Defaultable
 import Data.List (foldl')
 import Data.Monoid

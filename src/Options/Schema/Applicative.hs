@@ -12,7 +12,7 @@ module Options.Schema.Applicative (
   mkParser
 ) where
 
-import Control.Alternative.FreeStar
+import Control.Alternative.Freer
 import Control.Monad.Trans.Class (lift)
 import Control.Monad.Trans.Except
 import Data.Maybe (catMaybes)

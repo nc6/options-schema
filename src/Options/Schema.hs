@@ -17,7 +17,7 @@ module Options.Schema (
 ) where
 
 import Control.Monad ((>=>))
-import Control.Alternative.FreeStar
+import Control.Alternative.Freer
 
 type Schema a = Alt Option a
 

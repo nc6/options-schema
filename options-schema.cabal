@@ -17,19 +17,12 @@ cabal-version:       >=1.10
 
 library
   exposed-modules:
-                      Control.Alternative.FreeStar,
+                      Control.Alternative.Freer,
                       Data.Defaultable,
                       Options.Schema,
                       Options.Schema.Applicative,
                       Options.Schema.Builder
   other-modules:
-                      Control.Alternative.FreeND
---                      Control.Alternative.FreeStar
-                      Control.Applicative.Free.Complement
-                      Data.Bimonoid
-                      Data.Bimonoid.Expr
-                      Data.Bimonoid.Free
-                      Data.Monoid1
   -- other-extensions:
   build-depends:       base >=4.8,
                        bifunctors,
