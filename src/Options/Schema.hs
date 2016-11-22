@@ -65,10 +65,18 @@ data Option a = Option {
 instance Functor Option where
   fmap f (Option n d b) = Option n d (fmap f b)
 
-data Block a =
-    SingleArgument (Argument a)
-  | Subsection (Schema a)
+data Block a where
+  SingleArgument :: Argument a -> Block a
+  Subsection :: Schema a -> Block a
+  Flag :: Block Bool
 
 instance Functor Block where
   fmap f (SingleArgument x) = SingleArgument $ fmap f x
   fmap f (Subsection x) = Subsection $ fmap f x
+  fmap f Flag = SingleArgument $ fmap f arg where
+    arg = Argument {
+            aMetavar = Nothing
+          , aReader = \str -> return $ if null str then False else True
+          , aDefault = ArgumentDefault (Just False) Nothing
+          , aDescr = Description Nothing Nothing
+          }

@@ -9,6 +9,7 @@ module Options.Schema.Builder
   , option
   , strOption
   , intOption
+  , flag
   , compositeOption
   -- * Alternatives
   , oneOf
@@ -80,6 +81,15 @@ strOption = option (return . id)
 -- | Construct an option using the default 'Int' reader.
 intOption :: Mod Int -> Schema Int
 intOption = option (return . read)
+
+-- | Construct a specialised option for bools. This may be treated
+--   specially by the underlying parser.
+flag :: Mod Bool -> Schema Bool
+flag (Mod f) = liftAlt . f $ Option {
+    oNames = mempty
+  , oDescription = mempty
+  , oBlock = Flag
+  }
 
 -- | Construct an option from a sub-schema.
 compositeOption :: Schema a -> Mod a -> Schema a

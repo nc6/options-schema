@@ -11,7 +11,7 @@ import Options.Schema
 import Options.Schema.Applicative
 import Options.Schema.Builder
 
-data SubOpts = SubOpts (Defaultable Int) (Maybe String) deriving (Eq, Show)
+data SubOpts = SubOpts (Defaultable Int) (Maybe String) Bool deriving (Eq, Show)
 
 data MyOpts = MyOpts (Maybe Int) String SubOpts deriving (Eq, Show)
 
@@ -45,12 +45,18 @@ qaz = defaultable 4 . intOption $ long "qaz"
                 -- <> valueShow show
                 -- <> value 23
 
+qax :: Schema Bool
+qax =  flag $ long "qax"
+            <> summary "The qax flag"
+            <> detail "Some more detail about qax"
+        
+
 mySubOpts :: Schema SubOpts
 mySubOpts = compositeOption subOpts
             $  long "baz"
             <> summary "The baz subsection"
   where
-    subOpts = SubOpts <$> qaz <*> bar
+    subOpts = SubOpts <$> qaz <*> bar <*> qax
 
 myOpts :: Schema MyOpts
 myOpts = MyOpts <$> qux <*> foo <*> mySubOpts
