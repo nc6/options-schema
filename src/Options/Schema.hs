@@ -17,7 +17,7 @@ module Options.Schema (
 ) where
 
 import Control.Monad ((>=>))
-import Control.Alternative.FreeStar
+import Control.Alternative.Freer
 
 type Schema a = Alt Option a
 
@@ -65,10 +65,18 @@ data Option a = Option {
 instance Functor Option where
   fmap f (Option n d b) = Option n d (fmap f b)
 
-data Block a =
-    SingleArgument (Argument a)
-  | Subsection (Schema a)
+data Block a where
+  SingleArgument :: Argument a -> Block a
+  Subsection :: Schema a -> Block a
+  Flag :: a -> a -> Block a
 
 instance Functor Block where
   fmap f (SingleArgument x) = SingleArgument $ fmap f x
   fmap f (Subsection x) = Subsection $ fmap f x
+  fmap f (Flag active def) = SingleArgument $ fmap f arg where
+    arg = Argument {
+            aMetavar = Nothing
+          , aReader = \str -> return $ if null str then def else active
+          , aDefault = ArgumentDefault (Just def) Nothing
+          , aDescr = Description Nothing Nothing
+          }

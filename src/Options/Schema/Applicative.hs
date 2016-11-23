@@ -12,7 +12,7 @@ module Options.Schema.Applicative (
   mkParser
 ) where
 
-import Control.Alternative.FreeStar
+import Control.Alternative.Freer
 import Control.Monad.Trans.Class (lift)
 import Control.Monad.Trans.Except
 import Data.Maybe (catMaybes)
@@ -41,13 +41,23 @@ mkBlockParser sn _ (Subsection a) = mkParser . (hoistAlt go) $ a
     fstName = case (head sn) of
       LongName x -> x
       ShortName x -> [x]
+mkBlockParser n d (Flag active def) = mkFlagParser active def n d 
 
+-- | Make a flag parser
+mkFlagParser :: a -> a -> [Name] -> Description -> Parser a
+mkFlagParser active def n d = let
+  names = mconcat $ mkName <$> n
+  props = foldl1 (<>) $ names :
+    catMaybes [
+        fmap help $ dSummary d
+    ]
+  in flag def active props
 
 -- | Make a basic parser for simple options
 mkBasicParser :: [Name] -> Description -> Argument a -> Parser a
 mkBasicParser n d (Argument
   argName argReader (ArgumentDefault def pp) _) = let
-    names = foldl1 (<>) . map mkName $ n
+    names = mconcat $ mkName <$> n
     props = foldl1 (<>) $ names :
       catMaybes [
           fmap help $ dSummary d

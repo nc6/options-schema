@@ -3,7 +3,7 @@
 -- License   : BSD3
 
 import Control.Applicative
-import Control.Alternative.FreeStar
+import Control.Alternative.Freer
 
 import qualified Options.Applicative as CL
 import qualified Options.Applicative.Help.Core as CL

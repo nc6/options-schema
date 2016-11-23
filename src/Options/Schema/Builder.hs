@@ -9,6 +9,8 @@ module Options.Schema.Builder
   , option
   , strOption
   , intOption
+  , flag
+  , switch
   , compositeOption
   -- * Alternatives
   , oneOf
@@ -41,7 +43,7 @@ import Control.Applicative
   , optional
   , some
   )
-import Control.Alternative.FreeStar
+import Control.Alternative.Freer
 import Data.Defaultable
 import Data.List (foldl')
 import Data.Monoid
@@ -80,6 +82,21 @@ strOption = option (return . id)
 -- | Construct an option using the default 'Int' reader.
 intOption :: Mod Int -> Schema Int
 intOption = option (return . read)
+
+-- | Construct an option whose presence sets a flag. This may be treated
+--   specially by the underlying parser.
+flag :: a -- ^ Value when the flag is set.
+     -> a -- ^ Value when the flag is missing.
+     -> Mod a -> Schema a
+flag active def (Mod f) = liftAlt . f $ Option {
+    oNames = mempty
+  , oDescription = mempty
+  , oBlock = Flag active def
+  }
+
+-- | Construct a flag for bools.
+switch :: Mod Bool -> Schema Bool
+switch = flag True False
 
 -- | Construct an option from a sub-schema.
 compositeOption :: Schema a -> Mod a -> Schema a
