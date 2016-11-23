@@ -46,7 +46,7 @@ qaz = defaultable 4 . intOption $ long "qaz"
                 -- <> value 23
 
 qax :: Schema Bool
-qax =  flag $ long "qax"
+qax = switch $ long "qax"
             <> summary "The qax flag"
             <> detail "Some more detail about qax"
         

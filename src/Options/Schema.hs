@@ -68,15 +68,15 @@ instance Functor Option where
 data Block a where
   SingleArgument :: Argument a -> Block a
   Subsection :: Schema a -> Block a
-  Flag :: Block Bool
+  Flag :: a -> a -> Block a
 
 instance Functor Block where
   fmap f (SingleArgument x) = SingleArgument $ fmap f x
   fmap f (Subsection x) = Subsection $ fmap f x
-  fmap f Flag = SingleArgument $ fmap f arg where
+  fmap f (Flag active def) = SingleArgument $ fmap f arg where
     arg = Argument {
             aMetavar = Nothing
-          , aReader = \str -> return $ if null str then False else True
-          , aDefault = ArgumentDefault (Just False) Nothing
+          , aReader = \str -> return $ if null str then def else active
+          , aDefault = ArgumentDefault (Just def) Nothing
           , aDescr = Description Nothing Nothing
           }

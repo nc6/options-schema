@@ -41,17 +41,17 @@ mkBlockParser sn _ (Subsection a) = mkParser . (hoistAlt go) $ a
     fstName = case (head sn) of
       LongName x -> x
       ShortName x -> [x]
-mkBlockParser n d Flag = mkFlagParser n d 
+mkBlockParser n d (Flag active def) = mkFlagParser active def n d 
 
 -- | Make a flag parser
-mkFlagParser :: [Name] -> Description -> Parser Bool
-mkFlagParser n d = let
+mkFlagParser :: a -> a -> [Name] -> Description -> Parser a
+mkFlagParser active def n d = let
   names = foldl1 (<>) . map mkName $ n
   props = foldl1 (<>) $ names :
     catMaybes [
         fmap help $ dSummary d
     ]
-  in switch props
+  in flag def active props
 
 -- | Make a basic parser for simple options
 mkBasicParser :: [Name] -> Description -> Argument a -> Parser a

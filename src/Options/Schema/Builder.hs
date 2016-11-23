@@ -10,6 +10,7 @@ module Options.Schema.Builder
   , strOption
   , intOption
   , flag
+  , switch
   , compositeOption
   -- * Alternatives
   , oneOf
@@ -82,14 +83,20 @@ strOption = option (return . id)
 intOption :: Mod Int -> Schema Int
 intOption = option (return . read)
 
--- | Construct a specialised option for bools. This may be treated
+-- | Construct an option whose presence sets a flag. This may be treated
 --   specially by the underlying parser.
-flag :: Mod Bool -> Schema Bool
-flag (Mod f) = liftAlt . f $ Option {
+flag :: a -- ^ Value when the flag is set.
+     -> a -- ^ Value when the flag is missing.
+     -> Mod a -> Schema a
+flag active def (Mod f) = liftAlt . f $ Option {
     oNames = mempty
   , oDescription = mempty
-  , oBlock = Flag
+  , oBlock = Flag active def
   }
+
+-- | Construct a flag for bools.
+switch :: Mod Bool -> Schema Bool
+switch = flag True False
 
 -- | Construct an option from a sub-schema.
 compositeOption :: Schema a -> Mod a -> Schema a

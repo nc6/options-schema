@@ -33,7 +33,7 @@ instance Functor f => Applicative (Alt f) where
   pure = Pure
   {-# INLINE pure #-}
   (Pure f) <*> y = fmap f y
-  (Ap a f) <*> b = a `Ap` (flip <$> f <*> b)
+  (Ap a f) <*> b = Ap a (flip <$> f <*> b)
   Empty    <*> _ = Empty
   (Or a b) <*> c = Or (a <*> c) (b <*> c)
 
