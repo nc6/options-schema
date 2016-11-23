@@ -46,7 +46,7 @@ mkBlockParser n d (Flag active def) = mkFlagParser active def n d
 -- | Make a flag parser
 mkFlagParser :: a -> a -> [Name] -> Description -> Parser a
 mkFlagParser active def n d = let
-  names = foldl1 (<>) . map mkName $ n
+  names = mconcat $ mkName <$> n
   props = foldl1 (<>) $ names :
     catMaybes [
         fmap help $ dSummary d
@@ -57,7 +57,7 @@ mkFlagParser active def n d = let
 mkBasicParser :: [Name] -> Description -> Argument a -> Parser a
 mkBasicParser n d (Argument
   argName argReader (ArgumentDefault def pp) _) = let
-    names = foldl1 (<>) . map mkName $ n
+    names = mconcat $ mkName <$> n
     props = foldl1 (<>) $ names :
       catMaybes [
           fmap help $ dSummary d
