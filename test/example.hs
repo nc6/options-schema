@@ -15,9 +15,6 @@ data SubOpts = SubOpts (Defaultable Int) (Maybe String) Bool deriving (Eq, Show)
 
 data MyOpts = MyOpts (Maybe Int) String SubOpts deriving (Eq, Show)
 
-defaultShow :: Show a => a -> ArgumentDefault a
-defaultShow x = ArgumentDefault (Just x) (Just $ show x)
-
 foo :: Schema String
 foo = strOption $ long "foo" <> short 'f'
                 <> summary "The foo argument (mandatory)."
