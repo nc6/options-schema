@@ -34,6 +34,9 @@ instance Functor f => Functor (Alt f) where
 instance Functor f => Applicative (Alt f) where
   pure = Pure
   {-# INLINE pure #-}
+  (Pure f) <*> y = fmap f y
+  Empty    <*> _ = Empty
+  (Ap a f) <*> y = Ap a (flip <$> f <*> y)
   y <*> f = Ap f y
 
 instance Functor f => Alternative (Alt f) where
