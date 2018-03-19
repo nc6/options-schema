@@ -31,14 +31,14 @@ mkOptionParser (Option n d block) = mkBlockParser n d block
 
 mkBlockParser :: [Name] -> Description -> Block a -> Parser a
 mkBlockParser n d (SingleArgument a) = mkBasicParser n d a
-mkBlockParser sn _ (Subsection a) = mkParser . (hoistAlt go) $ a
+mkBlockParser sn _ (Subsection a) = mkParser . hoistAlt go $ a
   where
     go :: Option a -> Option a
     go (Option n d b) = Option (fmap go' n) d b
     go' = \case
       LongName x -> LongName $ fstName ++ "-" ++ x
       ShortName x -> LongName $ fstName ++ "-" ++ [x]
-    fstName = case (head sn) of
+    fstName = case head sn of
       LongName x -> x
       ShortName x -> [x]
 mkBlockParser n d (Flag active def) = mkFlagParser active def n d 
@@ -49,7 +49,7 @@ mkFlagParser active def n d = let
   names = mconcat $ mkName <$> n
   props = foldl1 (<>) $ names :
     catMaybes [
-        fmap help $ dSummary d
+        help <$> dSummary d
     ]
   in flag def active props
 
@@ -60,9 +60,9 @@ mkBasicParser n d (Argument
     names = mconcat $ mkName <$> n
     props = foldl1 (<>) $ names :
       catMaybes [
-          fmap help $ dSummary d
+          help <$> dSummary d
         , fmap value def
-        , fmap (\x -> showDefaultWith (\_ -> x)) pp
+        , fmap (showDefaultWith . const) pp
         , fmap metavar argName
       ]
   in option (mkReadM argReader) props

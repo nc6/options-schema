@@ -20,15 +20,21 @@ library
                       Control.Alternative.Freer,
                       Data.Defaultable,
                       Options.Schema,
+                      Options.Schema.Aeson,
                       Options.Schema.Applicative,
                       Options.Schema.Builder
   other-modules:
   -- other-extensions:
   build-depends:       base >=4.8,
+                       aeson,
                        binary,
+                       bytestring,
                        hashable,
                        optparse-applicative >= 0.11.0,
-                       transformers 
+                       text,
+                       transformers,
+                       unordered-containers,
+                       vector
 
   hs-source-dirs:      src
   default-language:    Haskell2010

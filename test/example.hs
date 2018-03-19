@@ -46,7 +46,6 @@ qax :: Schema Bool
 qax = switch $ long "qax"
             <> summary "The qax flag"
             <> detail "Some more detail about qax"
-        
 
 mySubOpts :: Schema SubOpts
 mySubOpts = compositeOption subOpts

@@ -3,7 +3,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Control.Alternative.Freer 
-  ( Alt
+  ( Alt(..)
   , runAlt
   , liftAlt
   , hoistAlt
